@@ -50,4 +50,21 @@
 #define KEY_COMMA			0x2c
 #define KEY_PERIOD		0x2e
 #define KEY_SEMICOLON 0x3b
+#define KEY_COLON     0x3a
+#define KEY_EQUALS		0x3d
+#define KEY_PLUS			0x2b
+#define KEY_MINUS			0x2d
+#define KEY_GTRTHAN		0x3e
+#define KEY_LESSTHAN	0x3c
+#define KEY_LEFT_BRACE 0x7b
+#define KEY_RIGHT_BRACE 0x7d
+#define KEY_BAR 			0x7c
+#define KEY_BACKSLASH 0x5c
+#define KEY_FRWDSLASH 0x2f
+#define KEY_POUND     0xa3
+#define KEY_QUESTION	0x3f
+#define KEY_ASTER			0x2a
+#define KEY_SQR_LEFT  0x5b
+#define KEY_SQR_RIGHT 0x5d
+
 

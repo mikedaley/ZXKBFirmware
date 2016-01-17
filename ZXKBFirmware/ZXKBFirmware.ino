@@ -92,14 +92,14 @@ int pcKeyMapShifted[addressLines][dataLines] = {
 // PC Shifted keyboard matrix. 
 int pcKeyMapSymbolShift[addressLines][dataLines] = {
 // 0------------------1------------------2------------------3--------------4  
-  {KEY_EXCLAM,        KEY_AT,            KEY_HASH,          KEY_DOLLAR,    KEY_PERCENT},    // 0
-  {KEY_Q,             KEY_W,             KEY_E,             KEY_R,         KEY_T},          // 1
-  {KEY_A,             KEY_S,             KEY_D,             KEY_F,         KEY_G},          // 2
-  {KEY_UNDER,         KEY_RIGHT_BRACKET, KEY_LEFT_BRACKET,  KEY_SGL_QUOTE, KEY_APERSAND},   // 3
-  {KEY_DBL_QUOTE,     KEY_SEMICOLON,     KEY_I,             KEY_U,         KEY_Y},          // 4
-  {KEY_LEFT_SHIFT,    KEY_Z,             KEY_X,             KEY_C,         KEY_V},          // 5
-  {KEY_RETURN    ,    KEY_L,             KEY_K,             KEY_J,         KEY_H},          // 6
-  {KEY_BACKSPACE ,    0,                 KEY_PERIOD,        KEY_COMMA,     KEY_B},          // 7
+  {KEY_EXCLAM,        KEY_AT,            KEY_HASH,          KEY_DOLLAR,     KEY_PERCENT},    // 0
+  {KEY_Q,             KEY_W,             KEY_E,             KEY_LESSTHAN,   KEY_GTRTHAN},    // 1
+  {KEY_A,             KEY_BAR,           KEY_BACKSLASH,     KEY_LEFT_BRACE, KEY_RIGHT_BRACE},// 2
+  {KEY_UNDER,         KEY_RIGHT_BRACKET, KEY_LEFT_BRACKET,  KEY_SGL_QUOTE,  KEY_APERSAND},   // 3
+  {KEY_DBL_QUOTE,     KEY_SEMICOLON,     KEY_I,             KEY_SQR_RIGHT,  KEY_SQR_LEFT},   // 4
+  {KEY_LEFT_SHIFT,    KEY_COLON,         KEY_POUND,         KEY_QUESTION,   KEY_FRWDSLASH},  // 5
+  {KEY_RETURN    ,    KEY_EQUALS,        KEY_PLUS,          KEY_MINUS,      KEY_H},          // 6
+  {KEY_BACKSPACE ,    0,                 KEY_PERIOD,        KEY_COMMA,      KEY_ASTER},      // 7
 }; 
 
 // Array used to store the state of indiviaul keys that have been pressed
