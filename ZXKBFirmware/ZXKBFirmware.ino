@@ -23,7 +23,9 @@ bool rightPressed = false;
 bool upPressed = false;
 bool downPressed = false;
 
-bool debug = true;
+bool debug = false;
+
+// simply disables all keyboard functions apart from switching keyboard mode. Used during testing
 bool fullKeyboard = true;
 
 bool keyboardModeButtonPressed = false;
