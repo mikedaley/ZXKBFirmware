@@ -1,13 +1,14 @@
-//  ZXKBFirmware v.05
+//  ZXKBFirmware v1.0
 //  Copyright 2016 Mike Daley
 
 #include <Keyboard.h>
+#include "keys.h"
 
 const int dataLines = 5;
 const int addressLines = 8;
 const int dataPin[dataLines] = {A0, A1, A2, A3, 15};          // The Pro-Micro does not have an A4 pin so using 15
 const int address[addressLines] = {2, 3, 4, 5, 6, 7, 8, 9};
-const int keyboardModeSpeakerPin = 10;                            // When LED is on keyboard is in special mode
+const int keyboardModeSpeakerPin = 10;                        // Speak will beep based on mode 1 = Spectrum, 2 = Fuse, 3 = PC
 const int keyboardModeButtonPin = 14;                         
 
 // Tracking when special keys that need us to send specific USB keyboard values have been pressed means that
@@ -15,7 +16,6 @@ const int keyboardModeButtonPin = 14;
 bool symbolShiftPressed = false;
 bool capsShiftPressed = false;
 
-// 
 bool enterPressed = false;
 bool deletePressed = false;
 bool leftPressed = false;
@@ -35,42 +35,59 @@ enum {
 };
 int keyboardMode;
 
-// Spectrum 16k/14k keyboard matrix
-char spectrumKeyMap[addressLines][dataLines] = {
-//  0   1   2   3   4  
-  {'1','2','3','4','5'}, // 0
-  {'q','w','e','r','t'}, // 1
-  {'a','s','d','f','g'}, // 2
-  {'0','9','8','7','6'}, // 3
-  {'p','o','i','u','y'}, // 4
-  {' ','z','x','c','v'}, // 5
-  {' ','l','k','j','h'}, // 6
-  {' ',' ','m','n','b'}, // 7
+// Spectrum 16k/14k keyboard matrix. This matrix layout matches the hardware layout
+int spectrumKeyMap[addressLines][dataLines] = {
+// 0---------------1-------------2------3------4  
+  {KEY_1,          KEY_2,        KEY_3, KEY_4, KEY_5}, // 0
+  {KEY_Q,          KEY_W,        KEY_E, KEY_R, KEY_T}, // 1
+  {KEY_A,          KEY_S,        KEY_D, KEY_F, KEY_G}, // 2
+  {KEY_0,          KEY_9,        KEY_8, KEY_7, KEY_6}, // 3
+  {KEY_P,          KEY_O,        KEY_I, KEY_U, KEY_Y}, // 4
+  {KEY_LEFT_SHIFT, KEY_Z,        KEY_X, KEY_C, KEY_V}, // 5
+  {KEY_RETURN    , KEY_L,        KEY_K, KEY_J, KEY_H}, // 6
+  {KEY_SPACE     , KEY_LEFT_ALT, KEY_M, KEY_N, KEY_B}, // 7
 };
 
-// Fuse keyboard matrix
+// Fuse keyboard matrix.  When running FUSE-SDL on the Pi, to get to options you need to 
+// press F1 which is not on the Spectrum+ keyboard, so moving to Fuse keyboard mode (2xbeeps)
+// means that press 1 through 9 provides F1 - F9, plus a couple of other keys such as enter
 int fuseKeyMap[addressLines][dataLines] = {
-  {KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5},
-  {KEY_ESC, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0},
-  {KEY_F10, KEY_F9, KEY_F8, KEY_F7, KEY_F6},
-  {0, 0, 0, 0, 0},
-  {0, 0, 0, 0, 0},
-  {KEY_RETURN, 0, 0, 0, 0},
-  {' ', 0, 0, 0, 0}  
+// 0----------1-------2-------3-------4  
+  {KEY_F1,    KEY_F2, KEY_F3, KEY_F4, KEY_F5},
+  {KEY_ESC,   0,      0,      0,      0},
+  {0,         0,      0,      0,      0},
+  {KEY_F10,   KEY_F9, KEY_F8, KEY_F7, KEY_F6},
+  {0,         0,      0,      0,      0},
+  {0,         0,      0,      0,      0},
+  {KEY_RETURN,        0,      0,      0, 0},
+  {KEY_SPACE,         0,      0,      0, 0}  
 };
 
-// Fuse keyboard matrix
-char pcKeyMap[addressLines][dataLines] = {
-  {'1','2','3','4','5'},
-  {'q','w','e','r','t'},
-  {'a','s','d','f','g'},
-  {'0','9','8','7','6'},
-  {'p','o','i','u','y'},
-  {' ','z','x','c','v'},
-  {' ','l','k','j','h'},
-  {' ',' ','m','n','b'},  
-};
+// PC Normal keyboard matrix
+int pcKeyMapNormal[addressLines][dataLines] = {
+// 0---------------1-------------2------3------4  
+  {KEY_1,          KEY_2,        KEY_3, KEY_4, KEY_5}, // 0
+  {KEY_Q,          KEY_W,        KEY_E, KEY_R, KEY_T}, // 1
+  {KEY_A,          KEY_S,        KEY_D, KEY_F, KEY_G}, // 2
+  {KEY_0,          KEY_9,        KEY_8, KEY_7, KEY_6}, // 3
+  {KEY_P,          KEY_O,        KEY_I, KEY_U, KEY_Y}, // 4
+  {KEY_LEFT_SHIFT, KEY_Z,        KEY_X, KEY_C, KEY_V}, // 5
+  {KEY_RETURN    , KEY_L,        KEY_K, KEY_J, KEY_H}, // 6
+  {KEY_SPACE     , KEY_LEFT_ALT, KEY_M, KEY_N, KEY_B}, // 7
+}; 
+
+// PC Shifted keyboard matrix. 
+int pcKeyMapShifted[addressLines][dataLines] = {
+// 0---------------1-------------2----------------3-------------4  
+  {KEY_1,          KEY_2,        KEY_3,           KEY_4,        KEY_LEFT_ARROW}, // 0
+  {KEY_Q,          KEY_W,        KEY_E,           KEY_R,        KEY_T},          // 1
+  {KEY_A,          KEY_S,        KEY_D,           KEY_F,        KEY_G},          // 2
+  {KEY_0,          KEY_9,        KEY_RIGHT_ARROW, KEY_UP_ARROW, KEY_DOWN_ARROW}, // 3
+  {KEY_P,          KEY_O,        KEY_I,           KEY_U,        KEY_Y},          // 4
+  {KEY_LEFT_SHIFT, KEY_Z,        KEY_X,           KEY_C,        KEY_V},          // 5
+  {KEY_RETURN    , KEY_L,        KEY_K,           KEY_J,        KEY_H},          // 6
+  {KEY_BACKSPACE , KEY_LEFT_ALT, KEY_M,           KEY_N,        KEY_B},          // 7
+}; 
 
 // Array used to store the state of indiviaul keys that have been pressed
 bool keyPressed[addressLines][dataLines] = {
@@ -84,7 +101,7 @@ bool keyPressed[addressLines][dataLines] = {
   {false, false, false, false, false}
 };
 
-
+// *** SETUP ***
 void setup() {
 
   // Setup the keyboard default mode, LED and button pins
@@ -114,6 +131,7 @@ void setup() {
   
 }
 
+// *** LOOP ***
 void loop() {
   
   // Check of the keyboard mode button has been pressed, if so then register its press, otherwise 
@@ -160,181 +178,121 @@ void loop() {
       // Get the value of the current data line...
       int pressed = digitalRead(dataPin[dataLine]);
 
-      // ...and if its LOW then a key has been pressed
+      // ...and if it's LOW then a key has been pressed
       if (pressed == LOW) {
 
-        // Deal with special keys
-        if (addrLine == 7 && dataLine == 1) { // Symbol Shift
-          if (symbolShiftPressed) continue;
-          Keyboard.press(KEY_LEFT_ALT);
+        // Deal with special keys by setting flags so we know what has been pressed
+        if (addrLine == 7 && dataLine == 1 && !symbolShiftPressed) { // Symbol Shift
           symbolShiftPressed = true;
-        } else if (addrLine == 5 && dataLine == 0) { // Caps Shift
-          if (capsShiftPressed) continue;
-          Keyboard.press(KEY_LEFT_SHIFT);
+        } else if (addrLine == 5 && dataLine == 0 && !capsShiftPressed) { // Caps Shift
           capsShiftPressed = true;
-        } else if (addrLine == 6 && dataLine == 0) {  // Enter
-          if (enterPressed) continue;
-           Keyboard.press(KEY_RETURN);
-           enterPressed = true;
-           if (debug) Serial.println("ENTER DOWN");
-        } else {
+        }
 
-          // Manage what is sent from the keyboard based on the keyboard mode
-          switch (keyboardMode) {
+        int outKey = 0;
+
+        // Manage what is sent from the keyboard based on the keyboard mode
+        switch (keyboardMode) {
+          
+          case MODE_SPECTRUM:
+            outKey = spectrumKeyMap[addrLine][dataLine];            
+            break;
             
-            case MODE_SPECTRUM:
-              if (!keyPressed[addrLine][dataLine]) {
-                if (debug) printDebug(addrLine, dataLine);
-                char outKey = spectrumKeyMap[addrLine][dataLine];            
-                Keyboard.press(outKey);
-                keyPressed[addrLine][dataLine] = true;
-              }
-              break;
-              
-            case MODE_FUSE:
-              if (!keyPressed[addrLine][dataLine]) {
-                if (debug) printDebug(addrLine, dataLine);
-                int outKey = fuseKeyMap[addrLine][dataLine];            
-                Keyboard.press(outKey);
-                keyPressed[addrLine][dataLine] = true;
-              }
-              break;
-              
-            case MODE_PC:
-              if (addrLine == 7 && dataLine == 0 && capsShiftPressed) {
-                if (deletePressed) continue;
-                Keyboard.press(KEY_BACKSPACE);
-                deletePressed = true;
-                if (debug) Serial.println("BACKSPACE DOWN");          
-              } else if (addrLine == 3 && dataLine == 3 &  capsShiftPressed) {
-                if (upPressed) continue;
-                Keyboard.release(KEY_LEFT_SHIFT);
-                Keyboard.press(KEY_UP_ARROW);
-                upPressed = true;
-                if (debug) Serial.println("UP DOWN");
-              } else if (addrLine == 3 && dataLine == 4 &  capsShiftPressed) {
-                if (downPressed) continue;
-                Keyboard.release(KEY_LEFT_SHIFT);
-                Keyboard.press(KEY_DOWN_ARROW);
-                downPressed = true;
-                if (debug) Serial.println("DOWN DOWN");
-              } else if (addrLine == 0 && dataLine == 4 &  capsShiftPressed) {
-                if (leftPressed) continue;
-                Keyboard.release(KEY_LEFT_SHIFT);
-                Keyboard.press(KEY_LEFT_ARROW);
-                leftPressed = true;
-                if (debug) Serial.println("LEFT DOWN");
-              } else if (addrLine == 3 && dataLine == 2 &  capsShiftPressed) {
-                if (rightPressed) continue;
-                Keyboard.release(KEY_LEFT_SHIFT);
-                Keyboard.press(KEY_RIGHT_ARROW);
-                rightPressed = true;
-                if (debug) Serial.println("RIGHT DOWN");
-              } else {
-                if (!keyPressed[addrLine][dataLine]) {
-                  if (debug) printDebug(addrLine, dataLine);
-                  int outKey = pcKeyMap[addrLine][dataLine];            
-                  Keyboard.press(outKey);
-                  keyPressed[addrLine][dataLine] = true;
-                }
-              }              
-              break;
-              
-            default:
-              if (debug) Serial.print("ERROR: Unknown keyboard mode");
-          }
+          case MODE_FUSE:
+            outKey = fuseKeyMap[addrLine][dataLine];            
+            break;
+            
+          case MODE_PC:
+            // In PC mode we use the shift key being pressed to read keys from a different matrix making it
+            // easier to assign different keys to Spectrum keyboard keys e.g. BREAK = BACKSPACE
+            if (capsShiftPressed) {
+              // Pressing a dedicated arrow key on the Spectrum+ keyboard actually regiters a CAPS SHIFT and then the
+              // appropriate number for the arrow e.g. 5, 6, 7, 8. In PC mode this CAPS SHIFT means than as the cursor
+              // moves it highlights as well. To stop this happening we release the CAPS SHIFT before sending the arrow
+              // key. You now can't highlight with arrow keys but correct movement seemed more important :O)
+              if ((addrLine == 3 && dataLine == 2) || (addrLine == 3 and dataLine == 3) || 
+                 (addrLine == 3 && dataLine == 4) || (addrLine == 0 && dataLine == 4)) {
+                  Keyboard.release(KEY_LEFT_SHIFT);
+                 }
+              outKey = pcKeyMapShifted[addrLine][dataLine];            
+            } else {
+              outKey = pcKeyMapNormal[addrLine][dataLine];            
+            }
+            break;
+            
+          default:
+            if (debug) Serial.print("ERROR: Unknown keyboard mode");
+        }
+
+         // We know what has been pressed and taken the key stroke to be send from the appropriate
+         // matrix array, so now send it and marked it as pressed in the keyPressed matrix array
+        if (!keyPressed[addrLine][dataLine]) {
+          if (debug) printDebug(addrLine, dataLine);
+          Keyboard.press(outKey);
+          keyPressed[addrLine][dataLine] = true;
         }
 
       // No key has been pressed so manage releasing any keys that were pressed
       } else {
 
-        // Deal with special keys that may have been pressed previously
+        int outKey = 0;
+
+        // Deal with special keys that may have been pressed previously set
         if (addrLine == 7 && dataLine == 1 && symbolShiftPressed) {      
-          Keyboard.release(KEY_LEFT_ALT);
           symbolShiftPressed = false;
         } else if (addrLine == 5 && dataLine == 0 && capsShiftPressed) {
-          Keyboard.release(KEY_LEFT_SHIFT);
           capsShiftPressed = false;
-        } else if (addrLine == 6 && dataLine == 0 && enterPressed) {
-          Keyboard.release(KEY_RETURN);
-          enterPressed = false;
-          if (debug) Serial.println("ENTER UP");
-        } else {
+        } 
           
-          // Based on the keyboard mode deal with releasing previously pressed keys
-          switch (keyboardMode) {
+        // Based on the keyboard mode deal with releasing previously pressed keys
+        switch (keyboardMode) {
 
-            case MODE_SPECTRUM:
-              if (keyPressed[addrLine][dataLine]) {    
-                char outKey = spectrumKeyMap[addrLine][dataLine];
-                Keyboard.release(outKey);
-                keyPressed[addrLine][dataLine] = false;
-              }
-              break;
+          case MODE_SPECTRUM:
+            outKey = spectrumKeyMap[addrLine][dataLine];            
+            break;
 
-            case MODE_FUSE:
-              if (keyPressed[addrLine][dataLine]) {
-                int outKey = fuseKeyMap[addrLine][dataLine];
-                Keyboard.release(outKey);
-                keyPressed[addrLine][dataLine] = false;
-              }
-              break;
+          case MODE_FUSE:
+            outKey = fuseKeyMap[addrLine][dataLine];            
+            break;
 
-            case MODE_PC:
-              if (addrLine == 7 && dataLine == 0 && capsShiftPressed && deletePressed) {
-                Keyboard.release(KEY_BACKSPACE);
-                deletePressed = false;
-                if (debug) Serial.println("BACKSPACE UP"); 
-              } else if (addrLine == 3 && dataLine == 3 && capsShiftPressed && upPressed) {
-                Keyboard.release(KEY_UP_ARROW);
-                upPressed = false;
-                if (debug) Serial.println("UP UP");
-              } else if (addrLine == 3 && dataLine == 4 && capsShiftPressed && downPressed) {
-                Keyboard.release(KEY_DOWN_ARROW);
-                downPressed = false;
-                if (debug) Serial.println("DOWN UP");
-              } else if (addrLine == 0 && dataLine == 4 && capsShiftPressed && leftPressed) {
-                Keyboard.release(KEY_LEFT_ARROW);
-                leftPressed = false;
-                if (debug) Serial.println("LEFT UP");
-              } else if (addrLine == 3 && dataLine == 2 && capsShiftPressed && rightPressed) {
-                Keyboard.release(KEY_RIGHT_ARROW);
-                rightPressed = false;
-                if (debug) Serial.println("RIGHT UP");
-              } else if (keyPressed[addrLine][dataLine]) {
-                int outKey = pcKeyMap[addrLine][dataLine];
-                Keyboard.release(outKey);
-                keyPressed[addrLine][dataLine] = false;
-              } 
-              break;
+          case MODE_PC:
+            if (capsShiftPressed) { 
+              outKey = pcKeyMapShifted[addrLine][dataLine];            
+            } else {
+              outKey = pcKeyMapNormal[addrLine][dataLine];            
+            }
+            break;
 
-            default:
-              if (debug) Serial.println("ERROR: Unknown keyboard mode");
-
-          }
+          default:
+            if (debug) Serial.println("ERROR: Unknown keyboard mode");
         }
+
+        // Check to see if the current matrix poition has a key press registered. If so then release
+        // that key and mark it as released
+        if (keyPressed[addrLine][dataLine]) {
+          Keyboard.release(outKey);
+          keyPressed[addrLine][dataLine] = false;
+        } 
+        
       }
     }
- 
+
+    // Set the address line back to HIGH
     digitalWrite(address[addrLine], HIGH);
   }
 
 }
 
-
 void beep(int pin, int duration, int frequency) {
-
   for (int x = 0; x < duration; x++) {
     digitalWrite(pin, HIGH);
     delayMicroseconds(frequency);
     digitalWrite(pin, LOW);
     delayMicroseconds(frequency);
   }
-
 }
 
 void printDebug(int addrLine, int dataLine) {
-  char outKey = spectrumKeyMap[addrLine][dataLine];            
+  int outKey = spectrumKeyMap[addrLine][dataLine];            
   Serial.print ("Addr Line: "); Serial.print(addrLine);
   Serial.print(" - ");
   Serial.print("Data Line: "); Serial.print(dataLine);
