@@ -89,6 +89,19 @@ int pcKeyMapShifted[addressLines][dataLines] = {
   {KEY_BACKSPACE , KEY_LEFT_ALT, KEY_M,           KEY_N,        KEY_B},          // 7
 }; 
 
+// PC Shifted keyboard matrix. 
+int pcKeyMapSymbolShift[addressLines][dataLines] = {
+// 0------------------1------------------2------------------3--------------4  
+  {KEY_EXCLAM,        KEY_AT,            KEY_HASH,          KEY_DOLLAR,    KEY_PERCENT},    // 0
+  {KEY_Q,             KEY_W,             KEY_E,             KEY_R,         KEY_T},          // 1
+  {KEY_A,             KEY_S,             KEY_D,             KEY_F,         KEY_G},          // 2
+  {KEY_UNDER,         KEY_RIGHT_BRACKET, KEY_LEFT_BRACKET,  KEY_SGL_QUOTE, KEY_APERSAND},   // 3
+  {KEY_DBL_QUOTE,     KEY_SEMICOLON,     KEY_I,             KEY_U,         KEY_Y},          // 4
+  {KEY_LEFT_SHIFT,    KEY_Z,             KEY_X,             KEY_C,         KEY_V},          // 5
+  {KEY_RETURN    ,    KEY_L,             KEY_K,             KEY_J,         KEY_H},          // 6
+  {KEY_BACKSPACE ,    0,                 KEY_PERIOD,        KEY_COMMA,     KEY_B},          // 7
+}; 
+
 // Array used to store the state of indiviaul keys that have been pressed
 bool keyPressed[addressLines][dataLines] = {
   {false, false, false, false, false}, 
@@ -214,6 +227,9 @@ void loop() {
                   Keyboard.release(KEY_LEFT_SHIFT);
                  }
               outKey = pcKeyMapShifted[addrLine][dataLine];            
+            } else if (symbolShiftPressed) {
+              Keyboard.release(KEY_LEFT_ALT);
+              outKey = pcKeyMapSymbolShift[addrLine][dataLine];            
             } else {
               outKey = pcKeyMapNormal[addrLine][dataLine];            
             }
@@ -257,6 +273,8 @@ void loop() {
           case MODE_PC:
             if (capsShiftPressed) { 
               outKey = pcKeyMapShifted[addrLine][dataLine];            
+            } else if (symbolShiftPressed) {
+              outKey = pcKeyMapSymbolShift[addrLine][dataLine];            
             } else {
               outKey = pcKeyMapNormal[addrLine][dataLine];            
             }
@@ -303,3 +321,4 @@ void printDebug(int addrLine, int dataLine) {
   Serial.print(" : ");
   Serial.println((symbolShiftPressed) ? "SYM ON" : "SYM OFF");  
 }
+
