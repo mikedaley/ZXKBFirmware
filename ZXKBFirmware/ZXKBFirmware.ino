@@ -18,13 +18,6 @@ const int keyboardModeButtonPin = 14;
 bool symbolShiftPressed = false;
 bool capsShiftPressed = false;
 
-bool enterPressed = false;
-bool deletePressed = false;
-bool leftPressed = false;
-bool rightPressed = false;
-bool upPressed = false;
-bool downPressed = false;
-
 bool debug = false;
 
 // simply disables all keyboard functions apart from switching keyboard mode. Used during testing
