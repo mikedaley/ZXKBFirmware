@@ -157,7 +157,7 @@ void loop() {
     // Cycle through the different keyboard modes
     keyboardMode = (keyboardMode + 1 > MODE_PC) ? MODE_SPECTRUM : keyboardMode + 1; 
 
-    // Generate a beep for each keyboard mode so we know what mode has been selected
+    // Beeps signal which mode the keyboard is in with the number of beeps matching the keyboard mode selected
     for (int beeps = 0; beeps < keyboardMode; beeps++) {
       beep(keyboardModeSpeakerPin, 350, 100);
       delay(40);
