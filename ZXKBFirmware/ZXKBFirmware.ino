@@ -17,13 +17,8 @@ const int keyboardModeButtonPin = 14;
 // we can release them correctly without constantly sending Keyboard.release commands for those keys
 bool symbolShiftPressed = false;
 bool capsShiftPressed = false;
-
-bool debug = false;
-
-// simply disables all keyboard functions apart from switching keyboard mode. Used during testing
-bool fullKeyboard = true;
-
 bool keyboardModeButtonPressed = false;
+bool debug = false;
 
 enum {
   MODE_SPECTRUM = 1,
@@ -174,8 +169,6 @@ void loop() {
     }
   }
 
-  if (!fullKeyboard) return;
-  
   // Loop through all the address lines
   for (int addrLine = 0; addrLine < addressLines; addrLine++) {
 
