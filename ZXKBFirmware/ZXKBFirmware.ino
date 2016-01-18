@@ -54,15 +54,15 @@ int spectrumKeyMap[addressLines][dataLines] = {
 // press F1 which is not on the Spectrum+ keyboard, so moving to Fuse keyboard mode (2xbeeps)
 // means that press 1 through 9 provides F1 - F9, plus a couple of other keys such as enter
 int fuseKeyMap[addressLines][dataLines] = {
-// 0----------1-------2-------3-------4  
-  {KEY_F1,    KEY_F2, KEY_F3, KEY_F4, KEY_F5},
-  {KEY_ESC,   0,      0,      0,      0},
-  {0,         0,      0,      0,      0},
-  {KEY_F10,   KEY_F9, KEY_F8, KEY_F7, KEY_F6},
-  {0,         0,      0,      0,      0},
-  {0,         0,      0,      0,      0},
-  {KEY_RETURN,        0,      0,      0, 0},
-  {KEY_SPACE,         0,      0,      0, 0}  
+// 0-----------1-------2-------3-------4  
+  {KEY_F1,     KEY_F2, KEY_F3, KEY_F4, KEY_F5},
+  {KEY_ESC,    0,      0,      0,      0},
+  {0,          0,      0,      0,      0},
+  {KEY_F10,    KEY_F9, KEY_F8, KEY_F7, KEY_F6},
+  {0,          0,      0,      0,      0},
+  {0,          0,      0,      0,      0},
+  {KEY_RETURN, 0,      0,      0,      0},
+  {KEY_SPACE,  0,      0,      0,      0}  
 };
 
 // PC Normal keyboard matrix
