@@ -1,6 +1,8 @@
-//  ZXKBFirmware v1.0
-//  Copyright 2016 Mike Daley
-
+//  Name:     ZXKBFirmware
+//  Version:  1.0
+//  Author:   Mike Daley
+//  Date:     January 2016
+//-------------------------------------------------------------------------
 #include <Keyboard.h>
 #include "keys.h"
 
