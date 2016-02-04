@@ -24,7 +24,7 @@
 #define KEY_W       	0x77
 #define KEY_X       	0x78
 #define KEY_Y       	0x79
-#define KEY_Z       	0x71
+#define KEY_Z       	0x7a
 #define KEY_0       	0x30
 #define KEY_1       	0x31
 #define KEY_2       	0x32
