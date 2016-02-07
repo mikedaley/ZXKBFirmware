@@ -42,17 +42,18 @@ int spectrumKeyMap[addressLines][dataLines] = {
 
 // Fuse keyboard matrix.  When running FUSE-SDL on the Pi, to get to options you need to 
 // press F1 which is not on the Spectrum+ keyboard, so moving to Fuse keyboard mode (2xbeeps)
-// means that press 1 through 9 provides F1 - F9, plus a couple of other keys such as enter
+// means that pressing 1 through 9 provides F1 - F9, plus a couple of other keys such as enter. 
+// To navigate the menus A = UP, Z = DOWN, N = LEFT, M = RIGHT
 int fuseKeyMap[addressLines][dataLines] = {
 // 0-----------1-------2-------3-------4  
-  {KEY_F1,     KEY_F2, KEY_F3, KEY_F4, KEY_F5},
-  {KEY_ESC,    0,      0,      0,      0},
-  {0,          0,      0,      0,      0},
-  {KEY_F10,    KEY_F9, KEY_F8, KEY_F7, KEY_F6},
-  {0,          0,      0,      0,      0},
-  {0,          0,      0,      0,      0},
-  {KEY_RETURN, 0,      0,      0,      0},
-  {KEY_SPACE,  0,      0,      0,      0}  
+  {KEY_F1,            KEY_F2,         KEY_F3,           KEY_F4,           KEY_F5},
+  {KEY_ESC,           0,              0,                0,                0},
+  {KEY_UP_ARROW,      0,              0,                0,                0},
+  {KEY_F10,           KEY_F9,         KEY_F8,           KEY_F7,           KEY_F6},
+  {0,                 0,              0,                0,                0},
+  {0,                 KEY_DOWN_ARROW, 0,                0,                0},
+  {KEY_RETURN,        0,              0,                0,                0},
+  {KEY_SPACE,         0,              KEY_RIGHT_ARROW,  KEY_LEFT_ARROW,   0}  
 };
 
 // PC Normal keyboard matrix
