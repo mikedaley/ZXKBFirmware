@@ -10,7 +10,7 @@ const int dataLines = 5;
 const int addressLines = 8;
 const int dataPin[dataLines] = {A0, A1, A2, A3, 15};          // The Pro-Micro does not have an A4 pin so using 15
 const int address[addressLines] = {2, 3, 4, 5, 6, 7, 8, 9};
-const int keyboardModeSpeakerPin = 10;                        // Speak will beep based on mode 1 = Spectrum, 2 = Fuse, 3 = PC
+const int keyboardModeSpeakerPin = 10;                        // Speaker will beep based on mode 1 = Spectrum, 2 = Fuse, 3 = PC
 const int keyboardModeButtonPin = 14;                         
 
 // Tracking when special keys that need us to send specific USB keyboard values have been pressed means that
@@ -27,7 +27,7 @@ enum {
 };
 int keyboardMode;
 
-// Spectrum 16k/14k keyboard matrix. This matrix layout matches the hardware layout
+// Spectrum 16k/48k keyboard matrix. This matrix layout matches the hardware layout
 int spectrumKeyMap[addressLines][dataLines] = {
 // 0---------------1-------------2------3------4  
   {KEY_1,          KEY_2,        KEY_3, KEY_4, KEY_5}, // 0
