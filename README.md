@@ -13,6 +13,8 @@ Thanks go to all those who have gone before me and shared their information. It 
 
 ZX Spectrum+ case. I found a cheap one on eBay that had no mother board, so I didn't need to harm a working Spectrum to make the Spectrum Pi.
 
+[ZX Spectrum+ keyboard membrane](http://www.sellmyretro.com/offer/details/Brand-New-Sinclair-ZX-Spectrum%2B-48K~~128K-Keyboard-Membrane-2141) as the one that came with the case was cracked and brittle.
+
 [Raspberry Pi 2 B](https://www.raspberrypi.org/products/raspberry-pi-2-model-b/)
 
 [Micro USB 5 pin female to male left angle extension cable USB 2](http://www.amazon.co.uk/gp/product/B00NIGQ2FK?psc=1&redirect=true&ref_=oh_aui_detailpage_o00_s00)
